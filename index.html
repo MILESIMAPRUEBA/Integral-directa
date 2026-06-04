@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Integrales Directas con Argumento - Prepa</title>
+    <style>
+        /* Fondo Animado con gradiente rosado en movimiento */
+        @keyframes fondoAnimado {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(-45deg, #ff9a9e, #fecfef, #feada6, #f3a6c8);
+            background-size: 400% 400%;
+            animation: fondoAnimado 12s ease infinite;
+            color: #2c3e50;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            max-width: 600px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-sizing: border-box;
+        }
+
+        /* Botones Morados Estilizados */
+        button {
+            background-color: #8a2be2;
+            color: #ffffff;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+        }
+
+        button:hover {
+            background-color: #7b1fa2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+        }
+
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(138, 43, 226, 0.3);
+        }
+
+        /* Diseño en lista vertical */
+        .button-group {
+            display: flex;
+            flex-direction: column; 
+            align-items: center;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .button-group button, #inicio button {
+            margin: 0;
+            width: 100%;
+            max-width: 340px;
+            padding: 16px 20px; 
+        }
+
+        /* Botón volver con tono morado secundario */
+        #btn-volver {
+            background-color: #6a1b9a;
+        }
+        #btn-volver:hover {
+            background-color: #4a148c;
+        }
+
+        /* Pantallas */
+        .screen {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        /* Pantalla de Inicio */
+        #inicio h1 {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            color: #4a148c;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 800;
+        }
+
+        #inicio p {
+            font-size: 1.1rem;
+            color: #6a1b9a;
+            margin-bottom: 25px;
+        }
+
+        /* Pantalla de Calculadora */
+        h2 {
+            color: #4a148c;
+            margin-bottom: 20px;
+        }
+
+        select, input {
+            padding: 12px;
+            font-size: 1.1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            background-color: #ffffff;
+            color: #333;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #8a2be2;
+        }
+
+        .opcion-bloque {
+            background-color: rgba(138, 43, 226, 0.05);
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(138, 43, 226, 0.15);
+        }
+
+        /* Contenedor de Resultados y Procedimientos */
+        #resultado-box {
+            margin-top: 25px;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        #resultado-box h3 {
+            margin-top: 0;
+            color: #4a148c;
+            border-bottom: 2px dashed #f0f0f0;
+            padding-bottom: 12px;
+        }
+
+        .paso {
+            margin-bottom: 14px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #4f5d75;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div id="inicio" class="screen active">
+            <h1>Integral Directa</h1>
+            <p>Aprende y resuelve integrales de forma sencilla paso a paso</p>
+            <div class="button-group">
+                <button id="btn-comenzar">Calcular ya</button>
+            </div>
+        </div>
+
+        <div id="calculadora" class="screen">
+            <h2>Formulario de Integrales</h2>
+            <p>Selecciona la función y edita los valores numéricos:</p>
+            
+            <div class="opcion-bloque">
+                <label for="tipo-integral"><b>Tipo: </b></label>
+                <select id="tipo-integral">
+                    <option value="potencia">∫ axⁿ dx (Potencia)</option>
+                    <option value="seno">∫ a · sin(kx) dx (Seno)</option>
+                    <option value="coseno">∫ a · cos(kx) dx (Coseno)</option>
+                    <option value="exponencial">∫ a · e^(kx) dx (Exponencial)</option>
+                </select>
+            </div>
+
+            <div id="inputs-dinamicos" class="opcion-bloque">
+                <span>∫ </span>
+                <input type="number" id="val-a" value="4" style="width: 60px;" placeholder="a">
+                <span>x^</span>
+                <input type="number" id="val-n" value="3" style="width: 60px;" placeholder="n">
+                <span> dx</span>
+            </div>
+
+            <div class="button-group">
+                <button id="btn-calcular">Calcular Integral</button>
+                <button id="btn-volver">Volver</button>
+            </div>
+
+            <div id="resultado-box">
+                <h3>Procedimiento paso a paso:</h3>
+                <div id="pasos-integral"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Navegación
+        const pantallaInicio = document.getElementById('inicio');
+        const pantallaCalculadora = document.getElementById('calculadora');
+        const btnComenzar = document.getElementById('btn-comenzar');
+        const btnVolver = document.getElementById('btn-volver');
+        const btnCalcular = document.getElementById('btn-calcular');
+        const tipoIntegral = document.getElementById('tipo-integral');
+        const inputsDinamicos = document.getElementById('inputs-dinamicos');
+        const resultadoBox = document.getElementById('resultado-box');
+        const pasosDiv = document.getElementById('pasos-integral');
+
+        btnComenzar.addEventListener('click', () => {
+            pantallaInicio.classList.remove('active');
+            pantallaCalculadora.classList.add('active');
+        });
+
+        btnVolver.addEventListener('click', () => {
+            pantallaCalculadora.classList.remove('active');
+            pantallaInicio.classList.add('active');
+            resultadoBox.style.display = 'none';
+        });
+
+        // Cambiar estructura de inputs según la fórmula
+        tipoIntegral.addEventListener('change', () => {
+            resultadoBox.style.display = 'none';
+            const opcion = tipoIntegral.value;
+            
+            if (opcion === 'potencia') {
+                inputsDinamicos.innerHTML = `
+                    <span>∫ </span>
+                    <input type="number" id="val-a" value="4" style="width: 60px;">
+                    <span>x^</span>
+                    <input type="number" id="val-n" value="3" style="width: 60px;">
+                    <span> dx</span>
+                `;
+            } else if (opcion === 'seno' || opcion === 'coseno') {
+                inputsDinamicos.innerHTML = `
+                    <span>∫ </span>
+                    <input type="number" id="val-a" value="2" style="width: 55px;" placeholder="a">
+                    <span> · ${opcion}(</span>
+                    <input type="number" id="val-k" value="5" style="width: 55px;" placeholder="k">
+                    <span>x) dx</span>
+                `;
+            } else if (opcion === 'exponencial') {
+                inputsDinamicos.innerHTML = `
+                    <span>∫ </span>
+                    <input type="number" id="val-a" value="3" style="width: 55px;" placeholder="a">
+                    <span> · e^(</span>
+                    <input type="number" id="val-k" value="4" style="width: 55px;" placeholder="k">
+                    <span>x) dx</span>
+                `;
+            }
+        });
+
+        // Motor de cálculo matemático
+        btnCalcular.addEventListener('click', () => {
+            const opcion = tipoIntegral.value;
+            let htmlPasos = "";
+            let resultadoFinal = "";
+
+            const a = parseFloat(document.getElementById('val-a').value || 1);
+
+            if (opcion === 'potencia') {
+                const n = parseFloat(document.getElementById('val-n').value || 1);
+                
+                if (n === -1) {
+                    htmlPasos = `
+                        <div class="paso"><b>Caso Especial (n = -1):</b> La fórmula ∫ a·x⁻¹ dx es equivalente a ∫ (a/x) dx</div>
+                        <div class="paso"><b>Fórmula:</b> ∫ (a/x) dx = a · ln|x| + C</div>
+                    `;
+                    resultadoFinal = `${a} · ln|x| + C`;
+                } else {
+                    const nuevoExponente = n + 1;
+                    const denominador = nuevoExponente;
+                    
+                    htmlPasos = `
+                        <div class="paso"><b>Fórmula:</b> ∫ [a·xⁿ] dx = (a · xⁿ⁺¹) / (n + 1) + C</div>
+                        <div class="paso"><b>Paso 1:</b> Sumar 1 al exponente &rarr; ${n} + 1 = ${nuevoExponente}</div>
+                        <div class="paso"><b>Paso 2:</b> Dividir todo el término entre el nuevo exponente &rarr; Denominador = ${denominador}</div>
+                        <div class="paso"><b>Paso 3:</b> Añadir la constante de integración <b>+ C</b>.</div>
+                    `;
+                    
+                    // Simplificación básica si la división es exacta
+                    if (a % denominador === 0) {
+                        resultadoFinal = `${a / denominador}x<sup>${nuevoExponente}</sup> + C`;
+                    } else {
+                        resultadoFinal = `(${a}/${denominador})x<sup>${nuevoExponente}</sup> + C`;
+                    }
+                }
+
+            } else if (opcion === 'seno') {
+                const k = parseFloat(document.getElementById('val-k').value || 1);
+                const coeficienteFinal = -(a / k);
+                
+                htmlPasos = `
+                    <div class="paso"><b>Fórmula (con argumento):</b> ∫ [a · sin(kx)] dx = -(a / k) · cos(kx) + C</div>
+                    <div class="paso"><b>Paso 1 (Completar diferencial):</b> Al integrar, dividimos la constante exterior entre el número que acompaña a la x (k = <b>${k}</b>).</div>
+                    <div class="paso"><b>Paso 2 (Cambio de signo y producto):</b> Como la integral del seno es el <i>menos coseno</i>, el resultado se vuelve negativo &rarr; -(${a} / ${k}) = ${coeficienteFinal.toFixed(2)}</div>
+                    <div class="paso"><b>Paso 3:</b> Mantenemos el argumento original (<b>${k}x</b>) y agregamos el <b>+ C</b>.</div>
+                `;
+                resultadoFinal = `${coeficienteFinal.toFixed(2)} · cos(${k}x) + C`;
+
+            } else if (opcion === 'coseno') {
+                const k = parseFloat(document.getElementById('val-k').value || 1);
+                const coeficienteFinal = a / k;
+                
+                htmlPasos = `
+                    <div class="paso"><b>Fórmula (con argumento):</b> ∫ [a · cos(kx)] dx = (a / k) · sin(kx) + C</div>
+                    <div class="paso"><b>Paso 1 (Completar diferencial):</b> Dividimos la constante exterior entre el valor de k &rarr; ${a} / ${k} = ${coeficienteFinal.toFixed(2)}</div>
+                    <div class="paso"><b>Paso 2:</b> La integral del coseno es el <i>seno positivo</i>, por lo que el signo no cambia.</div>
+                    <div class="paso"><b>Paso 3:</b> Conservamos el argumento original y añadimos la constante <b>+ C</b>.</div>
+                `;
+                resultadoFinal = `${coeficienteFinal.toFixed(2)} · sin(${k}x) + C`;
+
+            } else if (opcion === 'exponencial') {
+                const k = parseFloat(document.getElementById('val-k').value || 1);
+                const coeficienteFinal = a / k;
+                
+                htmlPasos = `
+                    <div class="paso"><b>Fórmula (con argumento):</b> ∫ [a · e^(kx)] dx = (a / k) · e^(kx) + C</div>
+                    <div class="paso"><b>Explicación de Prepa:</b> Por el método de sustitución (u-sub), la constante interna pasa dividiendo fuera de la exponencial.</div>
+                    <div class="paso"><b>Paso de operación:</b> Dividimos el coeficiente exterior entre el interno &rarr; ${a} / ${k} = ${coeficienteFinal.toFixed(2)}</div>
+                    <div class="paso"><b>Paso final:</b> La función e^(kx) se mantiene exactamente igual y se suma <b>+ C</b>.</div>
+                `;
+                resultadoFinal = `${coeficienteFinal.toFixed(2)} · e<sup>${k}x</sup> + C`;
+            }
+
+            // Renderizar resultado decorado
+            htmlPasos += `
+                <div class="paso" style="font-size: 1.3rem; margin-top: 15px; border-top: 2px dashed #f0f0f0; padding-top: 15px;">
+                    <b>F(x) = </b> <span style="color: #8a2be2; font-weight: bold;">${resultadoFinal}</span>
+                </div>
+            `;
+
+            pasosDiv.innerHTML = htmlPasos;
+            resultadoBox.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
